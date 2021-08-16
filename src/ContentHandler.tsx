@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Audio, Sequence, useCurrentFrame } from 'remotion';
+import AudioCueVisual from './AudioCueVisual';
 import AudioCueType from './Entity/AudioCueType';
 import Content from './Entity/Content';
 import ContentType from './Entity/ContentType';
@@ -111,9 +112,7 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
   return <>
     {audioSequences}
     {currentAudioCues.map((audioCue, audioCueIndex) => (
-      <div key={audioCueIndex} style={{fontSize: 200, color: '#000', marginTop: (audioCueIndex * 10) + '%'}}>
-        {audioCue.name}
-      </div>
+      <AudioCueVisual key={audioCueIndex} name={audioCue.name} index={audioCueIndex} />
     ))}
   </>
 }
