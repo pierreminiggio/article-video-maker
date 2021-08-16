@@ -3,6 +3,7 @@ import Content from './Entity/Content';
 import ContentType from './Entity/ContentType';
 import EmbedTwitterContent from './Entity/EmbedTwitterContent';
 import HasAudioContent from './Entity/HasAudioContent';
+import getAudioContentDurationInFrames from './Service/getAudioContentDurationInFrames';
 
 interface ContentHandlerProps {
   contents: Content[]
@@ -27,7 +28,7 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
 
       if ([ContentType.BlockQuote, ContentType.CaptionedImage, ContentType.Text, ContentType.Title].includes(contentType)) {
         const audioContent = content as HasAudioContent
-        jsx.push(createSequenceForAudioContent(
+        jsx.push(audioContentHandler(
           audioContent,
           contentIndex.toString(),
           (contentIndex + 1).toString(),
@@ -38,7 +39,7 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
         const twitterContent = content as EmbedTwitterContent
         const main = twitterContent.main
 
-        jsx.push(createSequenceForAudioContent(
+        jsx.push(audioContentHandler(
           main,
           contentIndex.toString() + '-main',
           (contentIndex + 1).toString() + ' Main',
@@ -49,7 +50,7 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
         const reply = twitterContent.reply
 
         if (reply !== null) {
-          jsx.push(createSequenceForAudioContent(
+          jsx.push(audioContentHandler(
             reply,
             contentIndex.toString() + '-reply',
             (contentIndex + 1).toString() + ' Reply',
@@ -64,7 +65,7 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
   </>
 }
 
-function createSequenceForAudioContent(
+function audioContentHandler(
   content: HasAudioContent,
   sequenceKey: string,
   name: string,
@@ -72,7 +73,7 @@ function createSequenceForAudioContent(
   fps: number
 ): JSX.Element {
   
-  const audioDurationInFrames = Math.ceil(content.audioDuration * fps)
+  const audioDurationInFrames = getAudioContentDurationInFrames(content, fps)
 
   const sequence = (
     <Sequence

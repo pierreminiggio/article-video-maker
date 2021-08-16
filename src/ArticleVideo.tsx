@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
-import { useEffect, useMemo, useState } from 'react';
-import {continueRender, delayRender, Sequence} from 'remotion';
+import { useEffect, useState } from 'react';
+import {continueRender, delayRender} from 'remotion';
 import ContentHandler from './ContentHandler';
 import Article from './Entity/Article';
 
