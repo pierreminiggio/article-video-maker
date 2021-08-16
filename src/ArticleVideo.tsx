@@ -32,7 +32,6 @@ export const ArticleVideo: React.FC<ArticleVideoProps> = ({uuid}) => {
 	const fps = 60
 
 	const durationInFrames = Math.ceil(article.duration * fps)
-	console.log(durationInFrames)
 
 	return (
 		<ContentHandler contents={article.content} fps={fps} from={0} />
