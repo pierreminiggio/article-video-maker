@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Img } from 'remotion'
+import { Gif } from '@remotion/gif'
 import AudioCueType from './Entity/AudioCueType'
 
 interface AudioCueVisualProps {
@@ -7,15 +8,29 @@ interface AudioCueVisualProps {
   index: number,
 }
 
+enum VisualType {
+  Image = 'image',
+  Gif = 'gif'
+}
+
+interface Visual {
+  type: VisualType
+  src: string
+}
+
 export default function AudioCueVisual({name, index}: AudioCueVisualProps): JSX.Element {
 
-  const imgSrc = useMemo<string>(() => {
-    return require('./Static/' + name + '.' + ([
+  const visual = useMemo<Visual>(() => {
+    const type = [
       AudioCueType.Add
-    ].includes(name) ? 'png' : 'gif'))
+    ].includes(name) ? VisualType.Image : VisualType.Gif
+
+    const src = require('./Static/' + name + '.' + (type === VisualType.Image ? 'png' : 'gif'))
+
+    return {type, src}
   }, [name])
 
   return <div style={{marginTop: (index * 10) + '%'}}>
-    <Img src={imgSrc} />
+    {visual.type === VisualType.Image ? <Img src={visual.src} /> : <Gif src={visual.src} />}
   </div>
 }
