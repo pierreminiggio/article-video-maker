@@ -6,5 +6,6 @@ export default interface Article {
   description: string
   link: string
   thumbnail: string
+  duration: number // float
   content: Array<Content>|null
 }

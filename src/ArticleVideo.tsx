@@ -1,6 +1,7 @@
 import fetch from 'node-fetch'
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {continueRender, delayRender, Sequence} from 'remotion';
+import ContentHandler from './ContentHandler';
 import Article from './Entity/Article';
 
 interface ArticleVideoProps {
@@ -13,7 +14,7 @@ export const ArticleVideo: React.FC<ArticleVideoProps> = ({uuid}) => {
 	const [article, setArticle] = useState<Article|null>(null)
 
 	useEffect(() => {
-		fetch('https://article-saver-api.ggio.fr/article/' + uuid).then(articleResponse => {
+		fetch('https://article-saver-api.ggio.fr/remotion/' + uuid).then(articleResponse => {
 			articleResponse.json().then(setArticle)
 		})
 	}, [handle])
@@ -28,9 +29,12 @@ export const ArticleVideo: React.FC<ArticleVideoProps> = ({uuid}) => {
 		return null
 	}
 
+	const fps = 60
+
+	const durationInFrames = Math.ceil(article.duration * fps)
+	console.log(durationInFrames)
+
 	return (
-		<div style={{fontSize: 200}}>
-			{article.title}
-		</div>
+		<ContentHandler contents={article.content} fps={fps} from={0} />
 	);
 };

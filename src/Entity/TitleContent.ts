@@ -1,7 +1,8 @@
 import AbstractContent from './AbstractContent';
 import ContentType from './ContentType';
+import HasAudioContent from './HasAudioContent';
 import HasStringContent from './HasStringContent';
 
-export default interface TitleContent extends AbstractContent, HasStringContent {
+export default interface TitleContent extends AbstractContent, HasAudioContent, HasStringContent {
   type: ContentType.Title
 }
