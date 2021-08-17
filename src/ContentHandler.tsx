@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Audio, Img, Sequence, useVideoConfig } from 'remotion';
 import AudioCueVisual from './AudioCueVisual';
 import cueDisplayTime from './Config/cueDisplayTime';
+import cueMinOverlap from './Config/cueMinOverlap';
 import imagesHeightRatio from './Config/imagesHeightRatio';
 import AudioCueType from './Entity/AudioCueType';
 import Content from './Entity/Content';
@@ -133,9 +134,26 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
       }
     })
 
-    return {audioSequences, audioCues: editable.audioCues.sort((a: FrameAudioCue, b: FrameAudioCue): number => {
+    let audioCues: Array<FrameAudioCue> = editable.audioCues.sort((a: FrameAudioCue, b: FrameAudioCue): number => {
       return a.frame - b.frame
-    })}
+    })
+
+    audioCues = audioCues.map((audioCue: FrameAudioCue, audioCueIndex: number, audioCues: Array<FrameAudioCue>): FrameAudioCue => {
+      if (audioCueIndex === 0) {
+        return audioCue
+      }
+
+      const lastAudioCue = audioCues[audioCueIndex - 1]
+      const cueOverlap = audioCue.frame - lastAudioCue.frame
+
+      if (cueOverlap < cueMinOverlap) {
+        audioCue.frame += cueMinOverlap - cueOverlap
+      }
+
+      return audioCue
+    })
+
+    return {audioSequences, audioCues}
   }, [contents, from, fps])
 
   return <>
@@ -168,7 +186,7 @@ function audioContentHandler(
 
   content.audioCues.forEach(audioCue => {
 
-    const frame = editable.from + getDurationInFrames(audioCue.time, fps)
+    let frame = editable.from + getDurationInFrames(audioCue.time, fps)
 
     const IsSameCueAlreadyDisplayedAtTheSameTime = editable.audioCues.filter(filteredCue => 
       filteredCue.name === audioCue.name && filteredCue.frame <= frame && (filteredCue.frame + cueDisplayTime / 2) >= frame
