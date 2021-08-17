@@ -1,9 +1,10 @@
 import fetch from 'node-fetch'
-import { useEffect, useMemo, useState } from 'react';
-import {continueRender, delayRender, Img, interpolate, Sequence, useCurrentFrame} from 'remotion';
+import { useEffect, useState } from 'react';
+import {Audio, continueRender, delayRender, Img, interpolate, Sequence, useCurrentFrame} from 'remotion';
 import cueDisplayTime from './Config/cueDisplayTime';
 import ContentHandler from './ContentHandler';
 import Article from './Entity/Article';
+import Music from './Music';
 
 interface ArticleVideoProps {
 	uuid: string
@@ -34,7 +35,11 @@ export const ArticleVideo: React.FC<ArticleVideoProps> = ({uuid}) => {
 	const durationInFrames = Math.ceil(article.duration * fps) + cueDisplayTime
 
 	const frame = useCurrentFrame()
-	const thumbnailOpacity = Math.min(1, interpolate(frame, [durationInFrames - cueDisplayTime / 2, durationInFrames], [1, 0]))
+	const thumbnailOpacity = Math.min(1, interpolate(
+		frame,
+		[durationInFrames - cueDisplayTime / 2, durationInFrames],
+		[1, 0]
+	))
 
 	const contentFrom = 0
 
@@ -60,6 +65,7 @@ export const ArticleVideo: React.FC<ArticleVideoProps> = ({uuid}) => {
 				filter: 'blur(20px)',
 			}} />
 		</Sequence>
+		<Music durationInFrames={durationInFrames} fps={fps} />
 		<ContentHandler
 			contents={article.content}
 			fps={fps}
