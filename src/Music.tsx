@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Audio, interpolate, Sequence, useCurrentFrame } from "remotion";
+import { Audio, interpolate, Sequence, useCurrentFrame, useVideoConfig } from "remotion";
 import cueDisplayTime from "./Config/cueDisplayTime";
 import introLength from "./Config/introLength";
 import textDisparitionFrame from "./Config/textDisparitionFrame";
@@ -7,13 +7,13 @@ import News from './news.mp3'
 
 interface MusicProps {
   durationInFrames: number
-  fps: number
 }
 
 const musicDurationInSeconds = 112
 
-export default function Music({durationInFrames, fps}: MusicProps) {
+export default function Music({durationInFrames}: MusicProps) {
 
+  const {fps} = useVideoConfig()
   const musicDurationInFrames = useMemo<number>(() => musicDurationInSeconds * fps, [fps])
   const numberOfLoops = useMemo<number>(
     () => Math.ceil(durationInFrames / musicDurationInFrames),

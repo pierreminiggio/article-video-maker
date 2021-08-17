@@ -1,4 +1,4 @@
-import { Img, interpolate, Sequence, useCurrentFrame } from 'remotion'
+import { Img, interpolate, Sequence, useCurrentFrame, useVideoConfig } from 'remotion'
 import cueDisplayTime from './Config/cueDisplayTime'
 import introLength from './Config/introLength'
 import thumbnailMaxBlur from './Config/thumbnailMaxBlur'
@@ -13,7 +13,7 @@ interface ArticleHandlerProps {
 
 export default function ArticleHandler({article}: ArticleHandlerProps) {
 
-  const fps = 60
+  const {fps} = useVideoConfig()
 	const durationInFrames = Math.ceil(article.duration * fps) + cueDisplayTime
 
 	const frame = useCurrentFrame()
@@ -53,10 +53,9 @@ export default function ArticleHandler({article}: ArticleHandlerProps) {
 				filter: 'blur(' + thumbnailMaxBlur + 'px)',
 			}} />
 		</Sequence>
-		<Music durationInFrames={durationInFrames} fps={fps} />
+		<Music durationInFrames={durationInFrames} />
 		<ContentHandler
 			contents={article.content}
-			fps={fps}
 			from={contentFrom}
 			durationInFrames={durationInFrames}
 		/>

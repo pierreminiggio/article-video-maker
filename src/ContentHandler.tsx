@@ -1,5 +1,5 @@
 import { CSSProperties, useMemo } from 'react';
-import { Audio, Img, interpolate, Sequence, useCurrentFrame, useVideoConfig } from 'remotion';
+import { Audio, Img, Sequence, useVideoConfig } from 'remotion';
 import AudioCueVisual from './AudioCueVisual';
 import cueDisplayTime from './Config/cueDisplayTime';
 import cueMinOverlap from './Config/cueMinOverlap';
@@ -14,7 +14,6 @@ import {getDurationInFrames, getAudioContentDurationInFrames} from './Service/Au
 
 interface ContentHandlerProps {
   contents: Content[]
-  fps: number
   from: number
   durationInFrames: number
 }
@@ -37,9 +36,9 @@ interface AudioSequences {
   audioCues: Array<FrameAudioCue>
 }
 
-export default function ContentHandler({contents, fps, from, durationInFrames}: ContentHandlerProps): JSX.Element {
+export default function ContentHandler({contents, from, durationInFrames}: ContentHandlerProps): JSX.Element {
 
-  const {height} = useVideoConfig()
+  const {height, fps} = useVideoConfig()
 
   const {audioSequences, audioCues} = useMemo<AudioSequences>(() => {
 
