@@ -57,7 +57,7 @@ export default function AudioCueVisual({name, from}: AudioCueVisualProps): JSX.E
     <div style={{
       position: 'absolute',
       top: 0,
-      left: width * (negativeMargin) - imageWidth
+      left: width * (negativeMargin) - imageWidth,
     }}>
       {visual.type === VisualType.Image ? (
         <Img src={visual.src} height={imageHeight} />

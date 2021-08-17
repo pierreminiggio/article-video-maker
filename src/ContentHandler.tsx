@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { CSSProperties, useMemo } from 'react';
 import { Audio, Img, Sequence, useVideoConfig } from 'remotion';
 import AudioCueVisual from './AudioCueVisual';
 import cueDisplayTime from './Config/cueDisplayTime';
@@ -11,11 +11,13 @@ import EmbedTwitterContent from './Entity/EmbedTwitterContent';
 import HasAudioContent from './Entity/HasAudioContent';
 import HasStringContent from './Entity/HasStringContent';
 import {getDurationInFrames, getAudioContentDurationInFrames} from './Service/AudioContentDurationCalculator';
+import './font.css'
 
 interface ContentHandlerProps {
   contents: Content[]
   fps: number
   from: number
+  durationInFrames: number
 }
 
 interface Incrementable {
@@ -36,7 +38,7 @@ interface AudioSequences {
   audioCues: Array<FrameAudioCue>
 }
 
-export default function ContentHandler({contents, fps, from}: ContentHandlerProps): JSX.Element {
+export default function ContentHandler({contents, fps, from, durationInFrames}: ContentHandlerProps): JSX.Element {
 
   const {height} = useVideoConfig()
 
@@ -59,6 +61,34 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
         const audioDurationInFrames = getAudioContentDurationInFrames(audioAndTextContent, fps)
 
         const textFrom = editable.from
+
+        const contentLength = audioAndTextContent.content.length
+        let fontSize = 55
+
+        if (contentLength >= 450) {
+          fontSize = 41
+        } else if (contentLength >= 400) {
+          fontSize = 45
+        } else if (contentLength >= 350) {
+          fontSize = 48
+        } else if (contentLength >= 300) {
+          fontSize = 51
+        }
+
+        const backgroundColor = '#F57C00'
+
+        const textPadding = 20
+        const shadowWidth = 20
+        const shadowWidthPx = shadowWidth + 'px'
+        const shadowHeightPx = shadowWidthPx
+
+        const textDivStyle: CSSProperties = {
+          position: 'absolute',
+          top: 0,
+          left: textPadding,
+          right: textPadding
+        }
+
         audioSequences.push(<Sequence
           key={contentType + contentIndex}
           from={textFrom}
@@ -66,12 +96,50 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
           name={contentType.substr(0, 1).toUpperCase() + contentType.substr(1, contentType.length - 1) + ' ' + contentIndex}
         >
           <div style={{
-            fontSize: 64,
+            fontSize,
             color: 'black',
             marginTop: height * (imagesHeightRatio + 0.1),
-            textAlign: 'center'
+            textAlign: 'center',
+            fontFamily: 'Montserrat',
+            lineHeight: 1.8,
+            position: 'relative',
+            width: '100%'
           }}>
-            {audioAndTextContent.content}
+            <div style={textDivStyle}>
+              <span
+                style={{
+                  color: 'transparent',
+                  backgroundColor,
+                  opacity: 0.7,
+                  boxShadow:
+                    shadowWidthPx + ' 0 0 '
+                      + backgroundColor
+                      + ',-' + shadowWidthPx + ' 0 0 '
+                      + backgroundColor
+                      + ',' + shadowWidthPx + ' ' + shadowHeightPx + ' 0 '
+                      + backgroundColor
+                      + ',-' + shadowWidthPx + ' -' + shadowHeightPx + ' 0 '
+                      + backgroundColor
+                      + ',' + shadowWidthPx + ' -' + shadowHeightPx + ' 0 '
+                      + backgroundColor
+                      + ',-' + shadowWidthPx + ' ' + shadowHeightPx + ' 0 '
+                      + backgroundColor
+                    ,
+                }}
+              >
+                {audioAndTextContent.content}
+              </span>
+            </div>
+            <div style={textDivStyle}>
+              <span
+                style={{
+                  color: '#FFF'
+                }}
+              >
+                {audioAndTextContent.content}
+              </span>
+            </div>
+            
           </div>
         </Sequence>)
 
@@ -163,6 +231,18 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
   }, [contents, from, fps])
 
   return <>
+    <Sequence
+			from={from}
+      durationInFrames={durationInFrames}
+      name="Fond Gif"
+		>
+      <div style={{
+        background: 'linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 254, 0))',
+        opacity: 0.2,
+        width: '100%',
+        height: height * imagesHeightRatio
+      }} />
+		</Sequence>
     {audioSequences}
     {audioCues.map((audioCue, audioCueIndex) => (
       <AudioCueVisual key={audioCueIndex} name={audioCue.name} from={audioCue.frame} />
