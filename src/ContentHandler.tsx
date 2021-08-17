@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Audio, Sequence, useCurrentFrame } from 'remotion';
 import AudioCueVisual from './AudioCueVisual';
+import cueDisplayTime from './cueDisplayTime';
 import AudioCueType from './Entity/AudioCueType';
 import Content from './Entity/Content';
 import ContentType from './Entity/ContentType';
@@ -83,36 +84,15 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
       }
     })
 
-    return {audioSequences, audioCues: editable.audioCues}
-  }, [contents, from, fps])
-
-  const currentAudioCues = useMemo<Array<FrameAudioCue>>(() => {
-    const currentCues: Array<FrameAudioCue> = []
-    const maxCueDuration = 300
-
-    audioCues.forEach(audioCue => {
-      const audioCueFrame = audioCue.frame
-      const isPresentOnScreen = frame >= audioCueFrame && (audioCueFrame + maxCueDuration) >= frame
-
-      if (isPresentOnScreen) {
-        const isAlreadyPresent = currentCues.filter(filteredCue => filteredCue.name === audioCue.name).length >= 1
-        
-        if (! isAlreadyPresent) {
-          currentCues.push(audioCue)
-        }
-      }
-    })
-
-    return currentCues.sort((a: FrameAudioCue, b: FrameAudioCue): number => {
+    return {audioSequences, audioCues: editable.audioCues.sort((a: FrameAudioCue, b: FrameAudioCue): number => {
       return a.frame - b.frame
-    })
-    
-  }, [audioCues, frame])
+    })}
+  }, [contents, from, fps])
 
   return <>
     {audioSequences}
-    {currentAudioCues.map((audioCue, audioCueIndex) => (
-      <AudioCueVisual key={audioCueIndex} name={audioCue.name} index={audioCueIndex} />
+    {audioCues.map((audioCue, audioCueIndex) => (
+      <AudioCueVisual key={audioCueIndex} name={audioCue.name} from={audioCue.frame} />
     ))}
   </>
 }
@@ -138,8 +118,19 @@ function audioContentHandler(
   );
 
   content.audioCues.forEach(audioCue => {
+
+    const frame = editable.from + getDurationInFrames(audioCue.time, fps)
+
+    const IsSameCueAlreadyDisplayedAtTheSameTime = editable.audioCues.filter(filteredCue => 
+      filteredCue.name === audioCue.name && filteredCue.frame <= frame && (filteredCue.frame + cueDisplayTime / 2) >= frame
+    ).length >= 1
+
+    if (IsSameCueAlreadyDisplayedAtTheSameTime) {
+      return
+    }
+
     const frameAudioCue: FrameAudioCue = {
-      frame: editable.from + getDurationInFrames(audioCue.time, fps),
+      frame,
       name: audioCue.name
     }
     editable.audioCues.push(frameAudioCue)
