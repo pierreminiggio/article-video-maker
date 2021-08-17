@@ -2,7 +2,8 @@ import { useMemo } from 'react'
 import { Img, interpolate, Sequence, useCurrentFrame, useVideoConfig } from 'remotion'
 import { Gif } from '@remotion/gif'
 import AudioCueType from './Entity/AudioCueType'
-import cueDisplayTime from './cueDisplayTime'
+import cueDisplayTime from './Config/cueDisplayTime'
+import imagesHeightRatio from './Config/imagesHeightRatio'
 
 interface AudioCueVisualProps {
   name: AudioCueType
@@ -38,8 +39,8 @@ export default function AudioCueVisual({name, from}: AudioCueVisualProps): JSX.E
   }, [width])
 
   const imageHeight = useMemo<number>(() => {
-    return height / 2.5
-  }, [height])
+    return height * imagesHeightRatio
+  }, [height, imagesHeightRatio])
 
   const frame = useCurrentFrame()
   const currentFrame = useMemo<number>(() => frame - from, [frame, from])

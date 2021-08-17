@@ -1,12 +1,14 @@
 import { useMemo } from 'react';
-import { Audio, Sequence, useCurrentFrame } from 'remotion';
+import { Audio, Img, Sequence, useVideoConfig } from 'remotion';
 import AudioCueVisual from './AudioCueVisual';
-import cueDisplayTime from './cueDisplayTime';
+import cueDisplayTime from './Config/cueDisplayTime';
+import imagesHeightRatio from './Config/imagesHeightRatio';
 import AudioCueType from './Entity/AudioCueType';
 import Content from './Entity/Content';
 import ContentType from './Entity/ContentType';
 import EmbedTwitterContent from './Entity/EmbedTwitterContent';
 import HasAudioContent from './Entity/HasAudioContent';
+import HasStringContent from './Entity/HasStringContent';
 import {getDurationInFrames, getAudioContentDurationInFrames} from './Service/AudioContentDurationCalculator';
 
 interface ContentHandlerProps {
@@ -35,7 +37,8 @@ interface AudioSequences {
 
 export default function ContentHandler({contents, fps, from}: ContentHandlerProps): JSX.Element {
 
-  const frame = useCurrentFrame()
+  const {height} = useVideoConfig()
+
   const {audioSequences, audioCues} = useMemo<AudioSequences>(() => {
 
     const audioSequences: Array<JSX.Element> = []
@@ -50,9 +53,29 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
       const contentType = content.type
 
       if ([ContentType.BlockQuote, ContentType.CaptionedImage, ContentType.Text, ContentType.Title].includes(contentType)) {
-        const audioContent = content as HasAudioContent
+        const audioAndTextContent = content as HasAudioContent&HasStringContent
+
+        const audioDurationInFrames = getAudioContentDurationInFrames(audioAndTextContent, fps)
+
+        const textFrom = editable.from
+        audioSequences.push(<Sequence
+          key={contentType + contentIndex}
+          from={textFrom}
+          durationInFrames={audioDurationInFrames}
+          name={contentType.substr(0, 1).toUpperCase() + contentType.substr(1, contentType.length - 1) + ' ' + contentIndex}
+        >
+          <div style={{
+            fontSize: 64,
+            color: 'black',
+            marginTop: height * (imagesHeightRatio + 0.1),
+            textAlign: 'center'
+          }}>
+            {audioAndTextContent.content}
+          </div>
+        </Sequence>)
+
         audioSequences.push(audioContentHandler(
-          audioContent,
+          audioAndTextContent,
           contentIndex.toString(),
           (contentIndex + 1).toString(),
           editable,
@@ -61,6 +84,34 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
       } else if (contentType === ContentType.EmbedTwitter) {
         const twitterContent = content as EmbedTwitterContent
         const main = twitterContent.main
+        const reply = twitterContent.reply
+        let tweetDurationInFrames = getAudioContentDurationInFrames(main, 60)
+
+        if (reply !== null) {
+          tweetDurationInFrames += getAudioContentDurationInFrames(reply, 60)
+        }
+
+        const tweetFrom = editable.from
+
+        audioSequences.push(<Sequence
+          key={contentType + contentIndex}
+          from={tweetFrom}
+          durationInFrames={tweetDurationInFrames}
+          name={'Tweet ' + contentIndex}
+        >
+          <div style={{
+            marginTop: height * (imagesHeightRatio + 0.1),
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center'
+          }}>
+            <Img
+              src={'data:image/png;base64, ' + twitterContent.screenshot}
+              height={height * (1 - imagesHeightRatio - 0.2)}
+              style={{flex: 'auto 0'}}
+            />
+          </div>
+        </Sequence>)
 
         audioSequences.push(audioContentHandler(
           main,
@@ -69,8 +120,6 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
           editable,
           fps
         ))
-
-        const reply = twitterContent.reply
 
         if (reply !== null) {
           audioSequences.push(audioContentHandler(
