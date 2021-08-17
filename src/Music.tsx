@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { Audio, interpolate, Sequence, useCurrentFrame } from "remotion";
 import cueDisplayTime from "./Config/cueDisplayTime";
+import introLength from "./Config/introLength";
+import textDisparitionFrame from "./Config/textDisparitionFrame";
 import News from './news.mp3'
 
 interface MusicProps {
@@ -19,12 +21,24 @@ export default function Music({durationInFrames, fps}: MusicProps) {
   )
 
   const frame = useCurrentFrame()
+  const maxIntroMusicVolume = 0.8
   const maxMusicVolume = 0.2
-  const musicVolume = Math.min(maxMusicVolume, interpolate(
-    frame,
-    [durationInFrames - cueDisplayTime / 2, durationInFrames],
-    [maxMusicVolume, 0]
-  ))
+  const musicVolume = useMemo<number>(() => {
+
+    if (frame <= introLength) {
+      return Math.min(maxIntroMusicVolume, interpolate(
+        frame,
+        [textDisparitionFrame, introLength],
+        [maxIntroMusicVolume, maxMusicVolume]
+      ))
+    }
+
+    return Math.min(maxMusicVolume, interpolate(
+      frame,
+      [durationInFrames - cueDisplayTime / 2, durationInFrames + introLength],
+      [maxMusicVolume, 0]
+    ))
+  }, [frame])
 
   return <>
     {[...Array(numberOfLoops).keys()].map(loop => {

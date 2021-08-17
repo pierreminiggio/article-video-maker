@@ -11,7 +11,6 @@ import EmbedTwitterContent from './Entity/EmbedTwitterContent';
 import HasAudioContent from './Entity/HasAudioContent';
 import HasStringContent from './Entity/HasStringContent';
 import {getDurationInFrames, getAudioContentDurationInFrames} from './Service/AudioContentDurationCalculator';
-import './font.css'
 
 interface ContentHandlerProps {
   contents: Content[]

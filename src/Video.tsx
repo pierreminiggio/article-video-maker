@@ -1,5 +1,6 @@
 import {Composition} from 'remotion';
 import {ArticleVideo} from './ArticleVideo';
+import introLength from './Config/introLength';
 
 export const RemotionVideo: React.FC = () => {
 	return (
@@ -7,7 +8,7 @@ export const RemotionVideo: React.FC = () => {
 			<Composition
 				id="ArticleVideo"
 				component={ArticleVideo}
-				durationInFrames={12691}
+				durationInFrames={12691 + introLength}
 				fps={60}
 				width={1920}
 				height={1080}

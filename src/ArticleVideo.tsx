@@ -1,10 +1,14 @@
 import fetch from 'node-fetch'
 import { useEffect, useState } from 'react';
-import {Audio, continueRender, delayRender, Img, interpolate, Sequence, useCurrentFrame} from 'remotion';
+import {continueRender, delayRender, Img, interpolate, Sequence, useCurrentFrame} from 'remotion';
 import cueDisplayTime from './Config/cueDisplayTime';
+import thumbnailMaxBlur from './Config/thumbnailMaxBlur';
 import ContentHandler from './ContentHandler';
 import Article from './Entity/Article';
+import Intro from './Intro';
 import Music from './Music';
+import './font.css'
+import introLength from './Config/introLength';
 
 interface ArticleVideoProps {
 	uuid: string
@@ -37,16 +41,16 @@ export const ArticleVideo: React.FC<ArticleVideoProps> = ({uuid}) => {
 	const frame = useCurrentFrame()
 	const thumbnailOpacity = Math.min(1, interpolate(
 		frame,
-		[durationInFrames - cueDisplayTime / 2, durationInFrames],
+		[durationInFrames - cueDisplayTime / 2, durationInFrames + introLength],
 		[1, 0]
 	))
 
-	const contentFrom = 0
+	const contentFrom = introLength
 
 	return <>
 		<Sequence
-			from={contentFrom}
-      durationInFrames={durationInFrames}
+			from={0}
+      durationInFrames={durationInFrames + introLength}
       name="Fond Noir"
 		>
       <div style={{
@@ -55,6 +59,12 @@ export const ArticleVideo: React.FC<ArticleVideoProps> = ({uuid}) => {
         height: '100%'
       }} />
 		</Sequence>
+		<Intro
+			introLength={introLength}
+			thumbnail={article.thumbnail}
+			title={article.title}
+			description={article.description}
+		/>
 		<Sequence
 			from={contentFrom}
 			durationInFrames={durationInFrames}
@@ -62,7 +72,7 @@ export const ArticleVideo: React.FC<ArticleVideoProps> = ({uuid}) => {
 		>
 			<Img src={article.thumbnail} style={{
 				opacity: thumbnailOpacity,
-				filter: 'blur(20px)',
+				filter: 'blur(' + thumbnailMaxBlur + 'px)',
 			}} />
 		</Sequence>
 		<Music durationInFrames={durationInFrames} fps={fps} />
