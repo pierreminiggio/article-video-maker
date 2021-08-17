@@ -1,5 +1,5 @@
 import { CSSProperties, useMemo } from 'react';
-import { Audio, Img, Sequence, useVideoConfig } from 'remotion';
+import { Audio, Img, interpolate, Sequence, useCurrentFrame, useVideoConfig } from 'remotion';
 import AudioCueVisual from './AudioCueVisual';
 import cueDisplayTime from './Config/cueDisplayTime';
 import cueMinOverlap from './Config/cueMinOverlap';
