@@ -94,6 +94,8 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
 
         const tweetFrom = editable.from
 
+        const twitterPadding = 0.05
+
         audioSequences.push(<Sequence
           key={contentType + contentIndex}
           from={tweetFrom}
@@ -101,14 +103,14 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
           name={'Tweet ' + contentIndex}
         >
           <div style={{
-            marginTop: height * (imagesHeightRatio + 0.1),
+            marginTop: height * (imagesHeightRatio + twitterPadding),
             width: '100%',
             display: 'flex',
             justifyContent: 'center'
           }}>
             <Img
               src={'data:image/png;base64, ' + twitterContent.screenshot}
-              height={height * (1 - imagesHeightRatio - 0.2)}
+              height={height * (1 - imagesHeightRatio - 2 * twitterPadding)}
               style={{flex: 'auto 0'}}
             />
           </div>
@@ -139,6 +141,10 @@ export default function ContentHandler({contents, fps, from}: ContentHandlerProp
     })
 
     audioCues = audioCues.map((audioCue: FrameAudioCue, audioCueIndex: number, audioCues: Array<FrameAudioCue>): FrameAudioCue => {
+
+      const audioCueFrameOffset = Math.round(cueDisplayTime / 3)
+      audioCue.frame = Math.max(audioCue.frame - audioCueFrameOffset, 0)
+
       if (audioCueIndex === 0) {
         return audioCue
       }

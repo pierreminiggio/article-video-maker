@@ -49,10 +49,10 @@ export default function AudioCueVisual({name, from}: AudioCueVisualProps): JSX.E
   
   const negativeMargin = interpolate(currentFrame, [startFrame, endFrame], [1, 0])
 
-
   return <Sequence
     from={from}
     durationInFrames={endFrame}
+    name={'Gif ' + name + ' ' + from}
   >
     <div style={{
       position: 'absolute',
