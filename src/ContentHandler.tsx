@@ -243,7 +243,7 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
 		</Sequence>
     {audioSequences}
     {audioCues.map((audioCue, audioCueIndex) => (
-      <AudioCueVisual key={audioCueIndex} name={audioCue.name} from={audioCue.frame} />
+      <AudioCueVisual key={audioCueIndex} name={audioCue.name} from={audioCue.frame} durationInFrames={durationInFrames} />
     ))}
   </>
 }

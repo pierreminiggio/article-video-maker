@@ -4,10 +4,12 @@ import { Gif } from '@remotion/gif'
 import AudioCueType from './Entity/AudioCueType'
 import cueDisplayTime from './Config/cueDisplayTime'
 import imagesHeightRatio from './Config/imagesHeightRatio'
+import introLength from './Config/introLength'
 
 interface AudioCueVisualProps {
   name: AudioCueType
   from: number
+  durationInFrames: number
 }
 
 enum VisualType {
@@ -20,7 +22,7 @@ interface Visual {
   src: string
 }
 
-export default function AudioCueVisual({name, from}: AudioCueVisualProps): JSX.Element {
+export default function AudioCueVisual({name, from, durationInFrames}: AudioCueVisualProps): JSX.Element {
 
   const visual = useMemo<Visual>(() => {
     const type = [
@@ -49,6 +51,12 @@ export default function AudioCueVisual({name, from}: AudioCueVisualProps): JSX.E
   
   const negativeMargin = interpolate(currentFrame, [startFrame, endFrame], [1, 0])
 
+  const opacity = Math.min(1, interpolate(
+		frame,
+		[durationInFrames - cueDisplayTime / 2, durationInFrames + introLength],
+		[1, 0]
+	))
+
   return <Sequence
     from={from}
     durationInFrames={endFrame}
@@ -60,9 +68,19 @@ export default function AudioCueVisual({name, from}: AudioCueVisualProps): JSX.E
       left: width * (negativeMargin) - imageWidth,
     }}>
       {visual.type === VisualType.Image ? (
-        <Img src={visual.src} height={imageHeight} />
+        <Img
+          src={visual.src}
+          height={imageHeight}
+          style={{opacity}}
+        />
       ) : (
-        <Gif src={visual.src} fit="contain" width={imageWidth} height={imageHeight} />
+        <Gif
+          src={visual.src}
+          fit="contain"
+          width={imageWidth}
+          height={imageHeight}
+          style={{opacity}}
+        />
       )}
     </div>
   </Sequence>
