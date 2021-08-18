@@ -9,6 +9,10 @@ on:
         description: "Duration in frames"
         required: true
         default: "12691"
+      fps:
+        description: "FPS"
+        required: false
+        default: "60"
 name: Render video
 jobs:
   render:

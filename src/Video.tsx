@@ -4,7 +4,7 @@ import introLength from './Config/introLength';
 
 export const RemotionVideo: React.FC = () => {
 
-	const {durationInFrames} = getInputProps()
+	const {durationInFrames, fps} = getInputProps()
 
 	return (
 		<>
@@ -12,7 +12,7 @@ export const RemotionVideo: React.FC = () => {
 				id="ArticleVideo"
 				component={ArticleVideo}
 				durationInFrames={(parseInt(durationInFrames) > 0 ? parseInt(durationInFrames) : 12691) + introLength}
-				fps={60}
+				fps={fps}
 				width={1920}
 				height={1080}
 				defaultProps={{
