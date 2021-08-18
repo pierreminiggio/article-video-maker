@@ -1,17 +1,18 @@
 import {Composition, getInputProps} from 'remotion';
 import {ArticleVideo} from './ArticleVideo';
 import introLength from './Config/introLength';
+import { getDurationInFrames } from './Service/AudioContentDurationCalculator';
 
 export const RemotionVideo: React.FC = () => {
 
-	const {durationInFrames, fps} = getInputProps()
+	const {durationInSeconds, fps} = getInputProps()
 
 	return (
 		<>
 			<Composition
 				id="ArticleVideo"
 				component={ArticleVideo}
-				durationInFrames={(parseInt(durationInFrames) > 0 ? parseInt(durationInFrames) : 12691) + introLength}
+				durationInFrames={(parseFloat(durationInSeconds) > 0 ? getDurationInFrames(parseFloat(durationInSeconds), fps) : 12691) + introLength}
 				fps={fps}
 				width={1920}
 				height={1080}

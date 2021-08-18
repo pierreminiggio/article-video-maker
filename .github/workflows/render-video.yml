@@ -5,10 +5,10 @@ on:
         description: "Article uuid"
         required: true
         default: "VGh1LCAwOCBKdWwgMjAyMSAxMzoyODowNSArMDAwMA=="
-      durationInFrames:
-        description: "Duration in frames"
+      durationInSeconds:
+        description: "Duration in seconds"
         required: true
-        default: "12691"
+        default: "211.516"
       fps:
         description: "FPS"
         required: false
