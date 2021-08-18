@@ -8,7 +8,7 @@ on:
       durationInSeconds:
         description: "Duration in seconds"
         required: true
-        default: "211.516"
+        default: "206.256"
       fps:
         description: "FPS"
         required: false
