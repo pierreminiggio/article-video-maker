@@ -33,7 +33,22 @@ export default function Intro({
     [-200, finalTopTitle]
   ), finalTopTitle)
 
-  const backgroundOpacity = Math.max(interpolate(
+  const minBackgroundOpacity = 0
+  const maxBackgroundOpacity = 0.7
+
+  const backgroundOpacity = Math.min(Math.max(interpolate(
+    frame,
+    [textDisparitionFrame - 50, introLength],
+    [maxBackgroundOpacity, minBackgroundOpacity]
+  ), minBackgroundOpacity), maxBackgroundOpacity)
+
+  const newsTextFadeOutOpacity = Math.min(Math.max(interpolate(
+    frame,
+    [60, textApparitionFrame - 20],
+    [1, 0]
+  ), 0), 1)
+
+  const textFadeOutOpacity = Math.max(interpolate(
     frame,
     [textDisparitionFrame, introLength],
     [1, 0]
@@ -45,9 +60,9 @@ export default function Intro({
       return 0
     }
     
-    return backgroundOpacity
+    return textFadeOutOpacity
 
-  }, [backgroundOpacity])
+  }, [frame, textDisparitionFrame, introLength])
 
   const textShadow = '3px 3px 3px black, 5px 5px 10px black, -2px -2px 3px black'
 
@@ -79,6 +94,18 @@ export default function Intro({
       name="Intro"
     >
       <div>
+      <h1 style={{
+          fontFamily: 'Montserrat',
+          color: '#FFF',
+          fontSize: 180,
+          textAlign: 'center',
+          position: 'absolute',
+          top: '25%',
+          left: 0,
+          right: 0,
+          opacity: newsTextFadeOutOpacity,
+          textShadow,
+        }}>Elon Musk News</h1>
         <h1 style={{
           fontFamily: 'Montserrat',
           color: '#FFF',
@@ -88,13 +115,13 @@ export default function Intro({
           top: topTitle + '%',
           left: 0,
           right: 0,
-          opacity: textOpacity,
+          opacity: textFadeOutOpacity,
           textShadow,
         }}>{title}</h1>
         <p style={{
           fontFamily: 'Montserrat',
           color: '#FFF',
-          fontSize: 50,
+          fontSize: 55,
           textAlign: 'center',
           position: 'absolute',
           top: '50%',
