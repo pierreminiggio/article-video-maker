@@ -1,14 +1,10 @@
 on:
   workflow_dispatch:
     inputs:
-      titleText:
-        description: "Which text should it say?"
+      uuid:
+        description: "Article uuid"
         required: true
-        default: "Welcome to Remotion"
-      titleColor:
-        description: "Which color should it be in?"
-        required: true
-        default: "black"
+        default: "VGh1LCAwOCBKdWwgMjAyMSAxMzoyODowNSArMDAwMA=="
 name: Render video
 jobs:
   render:
