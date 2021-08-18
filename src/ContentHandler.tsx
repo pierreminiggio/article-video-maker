@@ -1,5 +1,5 @@
 import { CSSProperties, useMemo } from 'react';
-import { Audio, Img, Sequence, useVideoConfig } from 'remotion';
+import { Audio, Img, interpolate, Sequence, useCurrentFrame, useVideoConfig } from 'remotion';
 import AudioCueVisual from './AudioCueVisual';
 import cueDisplayTime from './Config/cueDisplayTime';
 import cueMinOverlap from './Config/cueMinOverlap';
@@ -40,8 +40,14 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
 
   const {height, fps} = useVideoConfig()
 
-  const {audioSequences, audioCues} = useMemo<AudioSequences>(() => {
+  const frame = useCurrentFrame()
+  const contentOpacity = Math.max(Math.min(1, interpolate(
+		frame,
+		[from + durationInFrames - cueDisplayTime * 1.5, from + durationInFrames - cueDisplayTime],
+		[1, 0]
+	)), 0)
 
+  const {audioSequences, audioCues} = useMemo<AudioSequences>(() => {
     const audioSequences: Array<JSX.Element> = []
 
     const editable: Editable = {
@@ -101,7 +107,8 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
             fontFamily: 'Montserrat',
             lineHeight: 1.8,
             position: 'relative',
-            width: '100%'
+            width: '100%',
+            opacity: contentOpacity
           }}>
             <div style={textDivStyle}>
               <span
@@ -172,7 +179,8 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
             marginTop: height * (imagesHeightRatio + twitterPadding),
             width: '100%',
             display: 'flex',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            opacity: contentOpacity
           }}>
             <Img
               src={'data:image/png;base64, ' + twitterContent.screenshot}
@@ -226,7 +234,7 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
     })
 
     return {audioSequences, audioCues}
-  }, [contents, from, fps])
+  }, [contents, from, fps, contentOpacity])
 
   return <>
     <Sequence

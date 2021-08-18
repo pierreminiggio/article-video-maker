@@ -53,7 +53,7 @@ export default function AudioCueVisual({name, from, durationInFrames}: AudioCueV
 
   const opacity = Math.min(1, interpolate(
 		frame,
-		[durationInFrames - cueDisplayTime / 2, durationInFrames + introLength],
+		[introLength + durationInFrames - cueDisplayTime, durationInFrames + introLength - cueDisplayTime / 2],
 		[1, 0]
 	))
 

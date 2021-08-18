@@ -19,7 +19,7 @@ export default function ArticleHandler({article}: ArticleHandlerProps) {
 	const frame = useCurrentFrame()
 	const thumbnailOpacity = Math.min(1, interpolate(
 		frame,
-		[durationInFrames - cueDisplayTime / 2, durationInFrames + introLength],
+		[introLength + durationInFrames - cueDisplayTime / 2, durationInFrames + introLength],
 		[1, 0]
 	))
 
