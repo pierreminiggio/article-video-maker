@@ -3,6 +3,7 @@ enum AudioCueType {
   Air = 'air',
   Automaker = 'automaker',
   Button = 'button',
+  Calculator = 'calculator',
   California = 'california',
   Camera = 'camera',
   Comment = 'comment',
