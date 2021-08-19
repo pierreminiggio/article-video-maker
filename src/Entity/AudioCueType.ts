@@ -7,6 +7,7 @@ enum AudioCueType {
   California = 'california',
   Camera = 'camera',
   Comment = 'comment',
+  Capture = 'capture',
   Download = 'download',
   Electricity = 'electricity',
   Elon = 'elon',
