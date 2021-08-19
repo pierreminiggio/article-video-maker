@@ -16,6 +16,7 @@ enum AudioCueType {
   Exclamation = 'exclamation',
   Exit = 'exit',
   Fan = 'fan',
+  Follow = 'follow',
   Full = 'full',
   Help = 'help',
   Interesting = 'interesting',
