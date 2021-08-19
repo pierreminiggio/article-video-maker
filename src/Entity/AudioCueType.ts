@@ -26,6 +26,7 @@ enum AudioCueType {
   Month = 'month',
   News = 'news',
   People = 'people',
+  Police = 'police',
   Question = 'question',
   Radar = 'radar',
   Remove = 'remove',
