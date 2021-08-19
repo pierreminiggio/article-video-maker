@@ -6,6 +6,7 @@ enum AudioCueType {
   Button = 'button',
   Calculator = 'calculator',
   California = 'california',
+  Call = 'call',
   Camera = 'camera',
   Comment = 'comment',
   Capture = 'capture',
