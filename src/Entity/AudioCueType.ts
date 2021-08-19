@@ -37,6 +37,7 @@ enum AudioCueType {
   Snail = 'snail',
   Software = 'software',
   Spend = 'spend',
+  Tail = 'tail',
   Tech = 'tech',
   Tesla = 'tesla',
   Test = 'test',
