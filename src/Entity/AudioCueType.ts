@@ -1,6 +1,7 @@
 enum AudioCueType {
   Add = 'add',
   Air = 'air',
+  Ambulance = 'ambulance',
   Automaker = 'automaker',
   Button = 'button',
   Calculator = 'calculator',
