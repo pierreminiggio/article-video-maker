@@ -14,6 +14,7 @@ enum AudioCueType {
   Exit = 'exit',
   Fan = 'fan',
   Full = 'full',
+  Help = 'help',
   Interesting = 'interesting',
   Mars = 'mars',
   Midnight = 'midnight',
