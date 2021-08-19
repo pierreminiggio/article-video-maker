@@ -25,6 +25,7 @@ enum AudioCueType {
   Question = 'question',
   Radar = 'radar',
   Remove = 'remove',
+  Road = 'road',
   Rocket = 'rocket',
   Roll = 'roll',
   Ronflex = 'ronflex',
