@@ -32,6 +32,7 @@ enum AudioCueType {
   Saturday = 'saturday',
   Selfdriving = 'self-driving',
   Send = 'send',
+  Show = 'show',
   Snail = 'snail',
   Software = 'software',
   Spend = 'spend',
