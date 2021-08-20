@@ -228,7 +228,7 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
           right: textPadding
         }
 
-        const imageSizeRatio = 0.4
+        const imageSizeRatio = 0.35
 
         audioSequences.push(<Sequence
           key={contentType + 'image' + contentIndex}
@@ -308,6 +308,8 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
           editable,
           fps
         ))
+      } else {
+        throw new Error(contentType + ' not implemented')
       }
     })
 
