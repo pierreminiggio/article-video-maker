@@ -5,6 +5,7 @@ import cueDisplayTime from './Config/cueDisplayTime';
 import cueMinOverlap from './Config/cueMinOverlap';
 import imagesHeightRatio from './Config/imagesHeightRatio';
 import AudioCueType from './Entity/AudioCueType';
+import CaptionedImageContent from './Entity/CaptionedImageContent';
 import Content from './Entity/Content';
 import ContentType from './Entity/ContentType';
 import EmbedTwitterContent from './Entity/EmbedTwitterContent';
@@ -59,7 +60,7 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
 
       const contentType = content.type
 
-      if ([ContentType.BlockQuote, ContentType.CaptionedImage, ContentType.Text, ContentType.Title].includes(contentType)) {
+      if ([ContentType.BlockQuote, ContentType.Text, ContentType.Title].includes(contentType)) {
         const audioAndTextContent = content as HasAudioContent&HasStringContent
 
         const audioDurationInFrames = getAudioContentDurationInFrames(audioAndTextContent, fps)
@@ -159,10 +160,10 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
         const twitterContent = content as EmbedTwitterContent
         const main = twitterContent.main
         const reply = twitterContent.reply
-        let tweetDurationInFrames = getAudioContentDurationInFrames(main, 60)
+        let tweetDurationInFrames = getAudioContentDurationInFrames(main, fps)
 
         if (reply !== null) {
-          tweetDurationInFrames += getAudioContentDurationInFrames(reply, 60)
+          tweetDurationInFrames += getAudioContentDurationInFrames(reply, fps)
         }
 
         const tweetFrom = editable.from
@@ -207,6 +208,106 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
             fps
           ))
         }
+      } else if (contentType === ContentType.CaptionedImage) {
+        const captionedImageContent = content as CaptionedImageContent
+        const audioDurationInFrames = getAudioContentDurationInFrames(captionedImageContent, fps)
+
+        const textFrom = editable.from
+
+        const backgroundColor = '#F57C00'
+
+        const textPadding = 20
+        const shadowWidth = 20
+        const shadowWidthPx = shadowWidth + 'px'
+        const shadowHeightPx = shadowWidthPx
+
+        const textDivStyle: CSSProperties = {
+          position: 'absolute',
+          top: 0,
+          left: textPadding,
+          right: textPadding
+        }
+
+        const imageSizeRatio = 0.4
+
+        audioSequences.push(<Sequence
+          key={contentType + 'image' + contentIndex}
+          from={textFrom}
+          durationInFrames={audioDurationInFrames}
+          name={contentType.substr(0, 1).toUpperCase() + contentType.substr(1, contentType.length - 1) + ' ' + contentIndex}
+        >
+          <div style={{
+            marginTop: height * (imagesHeightRatio + 0.05),
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%'
+          }}>
+            <Img src={captionedImageContent.image} height={height * imageSizeRatio} style={{flex: 'auto 0'}} />
+          </div>
+        </Sequence>)
+
+        audioSequences.push(<Sequence
+          key={contentType + contentIndex}
+          from={textFrom}
+          durationInFrames={audioDurationInFrames}
+          name={contentType.substr(0, 1).toUpperCase() + contentType.substr(1, contentType.length - 1) + ' ' + contentIndex}
+        >
+          <div style={{
+            fontSize: 40,
+            color: 'black',
+            marginTop: height * (imagesHeightRatio + 0.1 + imageSizeRatio),
+            textAlign: 'center',
+            fontFamily: 'Montserrat',
+            lineHeight: 1.8,
+            position: 'relative',
+            width: '100%',
+            opacity: contentOpacity
+          }}>
+            <div style={textDivStyle}>
+              <span
+                style={{
+                  color: 'transparent',
+                  backgroundColor,
+                  opacity: 0.7,
+                  boxShadow:
+                    shadowWidthPx + ' 0 0 '
+                      + backgroundColor
+                      + ',-' + shadowWidthPx + ' 0 0 '
+                      + backgroundColor
+                      + ',' + shadowWidthPx + ' ' + shadowHeightPx + ' 0 '
+                      + backgroundColor
+                      + ',-' + shadowWidthPx + ' -' + shadowHeightPx + ' 0 '
+                      + backgroundColor
+                      + ',' + shadowWidthPx + ' -' + shadowHeightPx + ' 0 '
+                      + backgroundColor
+                      + ',-' + shadowWidthPx + ' ' + shadowHeightPx + ' 0 '
+                      + backgroundColor
+                    ,
+                }}
+              >
+                {captionedImageContent.caption}
+              </span>
+            </div>
+            <div style={textDivStyle}>
+              <span
+                style={{
+                  color: '#FFF'
+                }}
+              >
+                {captionedImageContent.caption}
+              </span>
+            </div>
+            
+          </div>
+        </Sequence>)
+
+        audioSequences.push(audioContentHandler(
+          captionedImageContent,
+          contentIndex.toString(),
+          (contentIndex + 1).toString(),
+          editable,
+          fps
+        ))
       }
     })
 
