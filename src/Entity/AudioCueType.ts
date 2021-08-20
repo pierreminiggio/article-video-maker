@@ -49,6 +49,7 @@ enum AudioCueType {
   Tesla = 'tesla',
   Test = 'test',
   Thousand = 'thousand',
+  Three = 'three',
   Time = 'time',
   Turn = 'turn',
   Twitter = 'twitter',
