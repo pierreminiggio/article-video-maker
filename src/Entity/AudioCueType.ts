@@ -30,6 +30,7 @@ enum AudioCueType {
   News = 'news',
   People = 'people',
   Police = 'police',
+  Progress = 'progress',
   Question = 'question',
   Radar = 'radar',
   Remove = 'remove',
