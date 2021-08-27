@@ -48,6 +48,7 @@ enum AudioCueType {
   Show = 'show',
   Snail = 'snail',
   Software = 'software',
+  Soon = 'soon',
   Spend = 'spend',
   Tail = 'tail',
   Tech = 'tech',
