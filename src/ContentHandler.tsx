@@ -1,17 +1,18 @@
-import { CSSProperties, useMemo } from 'react';
-import { Audio, Img, interpolate, Sequence, useCurrentFrame, useVideoConfig } from 'remotion';
-import AudioCueVisual from './AudioCueVisual';
-import cueDisplayTime from './Config/cueDisplayTime';
-import cueMinOverlap from './Config/cueMinOverlap';
-import imagesHeightRatio from './Config/imagesHeightRatio';
-import AudioCueType from './Entity/AudioCueType';
-import CaptionedImageContent from './Entity/CaptionedImageContent';
-import Content from './Entity/Content';
-import ContentType from './Entity/ContentType';
-import EmbedTwitterContent from './Entity/EmbedTwitterContent';
-import HasAudioContent from './Entity/HasAudioContent';
-import HasStringContent from './Entity/HasStringContent';
-import {getDurationInFrames, getAudioContentDurationInFrames} from './Service/AudioContentDurationCalculator';
+import { CSSProperties, useMemo } from 'react'
+import { Audio, Img, interpolate, Sequence, useCurrentFrame, useVideoConfig } from 'remotion'
+import AudioCueVisual from './AudioCueVisual'
+import cueDisplayTime from './Config/cueDisplayTime'
+import cueMinOverlap from './Config/cueMinOverlap'
+import imagesHeightRatio from './Config/imagesHeightRatio'
+import AudioCueType from './Entity/AudioCueType'
+import CaptionedImageContent from './Entity/CaptionedImageContent'
+import Content from './Entity/Content'
+import ContentType from './Entity/ContentType'
+import EmbedTwitterContent from './Entity/EmbedTwitterContent'
+import HasAudioContent from './Entity/HasAudioContent'
+import HasStringContent from './Entity/HasStringContent'
+import ImageContent from './Entity/ImageContent'
+import {getDurationInFrames, getAudioContentDurationInFrames} from './Service/AudioContentDurationCalculator'
 
 interface ContentHandlerProps {
   contents: Content[]
@@ -56,14 +57,19 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
       audioCues: []
     }
 
+    let previousFrom: number
+    let previousDurationInFrames: number
+
     contents.forEach((content, contentIndex) => {
 
       const contentType = content.type
+      const fromBeforeAlteration = editable.from
 
       if ([ContentType.BlockQuote, ContentType.Text, ContentType.Title].includes(contentType)) {
         const audioAndTextContent = content as HasAudioContent&HasStringContent
 
         const audioDurationInFrames = getAudioContentDurationInFrames(audioAndTextContent, fps)
+        previousDurationInFrames = audioDurationInFrames
 
         const textFrom = editable.from
 
@@ -166,6 +172,8 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
           tweetDurationInFrames += getAudioContentDurationInFrames(reply, fps)
         }
 
+        previousDurationInFrames = tweetDurationInFrames
+
         const tweetFrom = editable.from
 
         const twitterPadding = 0.05
@@ -211,6 +219,8 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
       } else if (contentType === ContentType.CaptionedImage) {
         const captionedImageContent = content as CaptionedImageContent
         const audioDurationInFrames = getAudioContentDurationInFrames(captionedImageContent, fps)
+
+        previousDurationInFrames = audioDurationInFrames
 
         const textFrom = editable.from
 
@@ -308,9 +318,32 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
           editable,
           fps
         ))
+      } else if (contentType === ContentType.Image) {
+        const imageContent = content as ImageContent
+        const imageDurationInFrames = previousDurationInFrames || (3 * fps)
+
+        const imageSizeRatio = 0.35
+
+        audioSequences.push(<Sequence
+          key={contentType + 'image' + contentIndex}
+          from={previousFrom}
+          durationInFrames={imageDurationInFrames}
+          name={contentType.substr(0, 1).toUpperCase() + contentType.substr(1, contentType.length - 1) + ' ' + contentIndex}
+        >
+          <div style={{
+            marginTop: height * 0.05,
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%'
+          }}>
+            <Img src={imageContent.image} height={height * imageSizeRatio} style={{flex: 'auto 0'}} />
+          </div>
+        </Sequence>)
       } else {
         throw new Error(contentType + ' not implemented')
       }
+
+      previousFrom = fromBeforeAlteration
     })
 
     let audioCues: Array<FrameAudioCue> = editable.audioCues.sort((a: FrameAudioCue, b: FrameAudioCue): number => {
