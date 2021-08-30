@@ -1,5 +1,5 @@
 import { CSSProperties, useMemo } from 'react'
-import { Audio, Img, interpolate, Sequence, useCurrentFrame, useVideoConfig } from 'remotion'
+import { Audio, Img, interpolate, Sequence, useCurrentFrame, useVideoConfig, Video } from 'remotion'
 import AudioCueVisual from './AudioCueVisual'
 import cueDisplayTime from './Config/cueDisplayTime'
 import cueMinOverlap from './Config/cueMinOverlap'
@@ -8,6 +8,7 @@ import AudioCueType from './Entity/AudioCueType'
 import CaptionedImageContent from './Entity/CaptionedImageContent'
 import Content from './Entity/Content'
 import ContentType from './Entity/ContentType'
+import EmbedContent, { VideoEmbedContent } from './Entity/EmbedContent'
 import EmbedTwitterContent from './Entity/EmbedTwitterContent'
 import HasAudioContent from './Entity/HasAudioContent'
 import HasStringContent from './Entity/HasStringContent'
@@ -151,7 +152,6 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
                 {audioAndTextContent.content}
               </span>
             </div>
-            
           </div>
         </Sequence>)
 
@@ -339,8 +339,93 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
             <Img src={imageContent.image} height={height * imageSizeRatio} style={{flex: 'auto 0'}} />
           </div>
         </Sequence>)
+      } else if (contentType === ContentType.Embed) {
+        const embedContent = content as EmbedContent
+
+        if (embedContent.video_clip && embedContent.video_clip_duration && embedContent.video_title) {
+          const videoEmbedContent = embedContent as VideoEmbedContent
+          const clipDurationInFrames = getDurationInFrames(videoEmbedContent.video_clip_duration, fps)
+          previousDurationInFrames = clipDurationInFrames
+
+          const clipFrom = editable.from
+
+          const backgroundColor = '#F57C00'
+
+          const textPadding = 20
+          const shadowWidth = 20
+          const shadowWidthPx = shadowWidth + 'px'
+          const shadowHeightPx = shadowWidthPx
+
+          const textDivStyle: CSSProperties = {
+            position: 'absolute',
+            top: 0,
+            left: textPadding,
+            right: textPadding
+          }
+
+          const imageSizeRatio = 0.35
+
+          audioSequences.push(<Sequence
+            key={contentType + contentIndex}
+            from={clipFrom}
+            durationInFrames={clipDurationInFrames}
+            name={'Tweet ' + contentIndex}
+          >
+            <Video src={videoEmbedContent.video_clip} style={{position: 'absolute'}} />
+            <div style={{
+              fontSize: 40,
+              color: 'black',
+              marginTop: height * (imagesHeightRatio + 0.1 + imageSizeRatio),
+              textAlign: 'center',
+              fontFamily: 'Montserrat',
+              lineHeight: 1.8,
+              position: 'relative',
+              width: '100%',
+              opacity: contentOpacity
+            }}>
+              <div style={textDivStyle}>
+                <span
+                  style={{
+                    color: 'transparent',
+                    backgroundColor,
+                    opacity: 0.7,
+                    boxShadow:
+                      shadowWidthPx + ' 0 0 '
+                        + backgroundColor
+                        + ',-' + shadowWidthPx + ' 0 0 '
+                        + backgroundColor
+                        + ',' + shadowWidthPx + ' ' + shadowHeightPx + ' 0 '
+                        + backgroundColor
+                        + ',-' + shadowWidthPx + ' -' + shadowHeightPx + ' 0 '
+                        + backgroundColor
+                        + ',' + shadowWidthPx + ' -' + shadowHeightPx + ' 0 '
+                        + backgroundColor
+                        + ',-' + shadowWidthPx + ' ' + shadowHeightPx + ' 0 '
+                        + backgroundColor
+                      ,
+                  }}
+                >
+                  {videoEmbedContent.video_title}
+                </span>
+              </div>
+              <div style={textDivStyle}>
+                <span
+                  style={{
+                    color: '#FFF'
+                  }}
+                >
+                  {videoEmbedContent.video_title}
+                </span>
+              </div>
+            </div>
+          </Sequence>)
+
+          editable.from += clipFrom
+
+        } else {
+          throw new Error(contentType + ' not implemented')
+        }
       } else {
-        throw new Error(contentType + ' not implemented')
       }
 
       previousFrom = fromBeforeAlteration
