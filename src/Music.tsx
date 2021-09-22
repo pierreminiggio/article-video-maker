@@ -7,11 +7,12 @@ import News from './news.mp3'
 
 interface MusicProps {
   durationInFrames: number
+  collidingAudio: boolean
 }
 
 const musicDurationInSeconds = 112
 
-export default function Music({durationInFrames}: MusicProps) {
+export default function Music({durationInFrames, collidingAudio}: MusicProps) {
 
   const {fps} = useVideoConfig()
   const musicDurationInFrames = useMemo<number>(() => musicDurationInSeconds * fps, [fps])
@@ -51,7 +52,7 @@ export default function Music({durationInFrames}: MusicProps) {
         durationInFrames={isLastLoop ? (durationInFrames % musicDurationInFrames) : musicDurationInFrames}
         name="Musique News"
       >
-        <Audio src={News} volume={musicVolume} />
+        <Audio src={News} volume={collidingAudio ? 0 : musicVolume} />
     </Sequence>
     })}
   </>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Img, interpolate, Sequence, useCurrentFrame, useVideoConfig } from 'remotion'
 import cueDisplayTime from './Config/cueDisplayTime'
 import introLength from './Config/introLength'
@@ -24,6 +25,8 @@ export default function ArticleHandler({article}: ArticleHandlerProps) {
 	))
 
 	const contentFrom = introLength
+
+	const [collidingAudio, setCollidingAudio] = useState(false)
 
 	return <>
 		<Sequence
@@ -53,11 +56,12 @@ export default function ArticleHandler({article}: ArticleHandlerProps) {
 				filter: 'blur(' + thumbnailMaxBlur + 'px)',
 			}} />
 		</Sequence>
-		<Music durationInFrames={durationInFrames} />
+		<Music durationInFrames={durationInFrames} collidingAudio={collidingAudio} />
 		<ContentHandler
 			contents={article.content}
 			from={contentFrom}
 			durationInFrames={durationInFrames}
+			onCollidingAudio={newCollidingAudio => newCollidingAudio !== collidingAudio && setCollidingAudio(newCollidingAudio)}
 		/>
 	</>;
 }

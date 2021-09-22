@@ -1,4 +1,4 @@
-import { CSSProperties, useMemo } from 'react'
+import { CSSProperties, useEffect, useMemo } from 'react'
 import { Audio, Img, interpolate, Sequence, useCurrentFrame, useVideoConfig, Video } from 'remotion'
 import AudioCueVisual from './AudioCueVisual'
 import cueDisplayTime from './Config/cueDisplayTime'
@@ -19,6 +19,7 @@ interface ContentHandlerProps {
   contents: Content[]
   from: number
   durationInFrames: number
+  onCollidingAudio?: (colliding: boolean) => void
 }
 
 interface Incrementable {
@@ -39,7 +40,7 @@ interface AudioSequences {
   audioCues: Array<FrameAudioCue>
 }
 
-export default function ContentHandler({contents, from, durationInFrames}: ContentHandlerProps): JSX.Element {
+export default function ContentHandler({contents, from, durationInFrames, onCollidingAudio}: ContentHandlerProps): JSX.Element {
 
   const {height, fps} = useVideoConfig()
 
@@ -50,8 +51,9 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
 		[1, 0]
 	)), 0)
 
-  const {audioSequences, audioCues} = useMemo<AudioSequences>(() => {
+  const {audioSequences, audioCues, collidingAudio} = useMemo<AudioSequences>(() => {
     const audioSequences: Array<JSX.Element> = []
+    let collidingAudio = false
 
     const editable: Editable = {
       from: from,
@@ -420,6 +422,10 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
             </div>
           </Sequence>)
 
+          if (frame >= clipFrom && frame <= (clipFrom + clipDurationInFrames)) {
+            collidingAudio = true
+          }
+
           editable.from += clipDurationInFrames
 
         } else {
@@ -454,8 +460,10 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
       return audioCue
     })
 
-    return {audioSequences, audioCues}
-  }, [contents, from, fps, contentOpacity])
+    return {audioSequences, audioCues, collidingAudio}
+  }, [contents, from, fps, contentOpacity, frame])
+
+  useEffect(() => onCollidingAudio && onCollidingAudio(collidingAudio), [collidingAudio, onCollidingAudio])
 
   return <>
     <Sequence
