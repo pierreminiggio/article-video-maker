@@ -420,7 +420,7 @@ export default function ContentHandler({contents, from, durationInFrames}: Conte
             </div>
           </Sequence>)
 
-          editable.from += clipFrom
+          editable.from += clipDurationInFrames
 
         } else {
           throw new Error(contentType + ' not implemented')
