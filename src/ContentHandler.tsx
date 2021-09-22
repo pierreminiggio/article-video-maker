@@ -35,6 +35,10 @@ interface Editable extends Incrementable {
   audioCues: Array<FrameAudioCue>
 }
 
+interface CollidingAudio {
+  collidingAudio: boolean
+}
+
 interface AudioSequences {
   audioSequences: Array<JSX.Element>
   audioCues: Array<FrameAudioCue>
@@ -51,7 +55,7 @@ export default function ContentHandler({contents, from, durationInFrames, onColl
 		[1, 0]
 	)), 0)
 
-  const {audioSequences, audioCues, collidingAudio} = useMemo<AudioSequences>(() => {
+  const {audioSequences, audioCues, collidingAudio} = useMemo<AudioSequences&CollidingAudio>(() => {
     const audioSequences: Array<JSX.Element> = []
     let collidingAudio = false
 
