@@ -433,6 +433,7 @@ export default function ContentHandler({contents, from, durationInFrames, onColl
           editable.from += clipDurationInFrames
 
         } else {
+          console.log(content)
           throw new Error(contentType + ' not implemented')
         }
       } else {

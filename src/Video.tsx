@@ -16,14 +16,14 @@ export const RemotionVideo: React.FC = () => {
 				durationInFrames={
 					(parseFloat(durationInSeconds) > 0 ?
 						getDurationInFrames(parseFloat(durationInSeconds), fps)
-						: 12375
+						: getDurationInFrames(113.328, 60)
 					) + introLength + cueDisplayTime
 				}
 				fps={parseInt(fps) > 0 ? parseInt(fps) : 60}
 				width={1920}
 				height={1080}
 				defaultProps={{
-					uuid: 'VGh1LCAwOCBKdWwgMjAyMSAxMzoyODowNSArMDAwMA=='
+					uuid: 'U3VuLCAyNCBPY3QgMjAyMSAyMzoyOToxMiArMDAwMA=='
 				}}
 			/>
 		</>
