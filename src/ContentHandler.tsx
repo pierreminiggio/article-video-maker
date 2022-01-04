@@ -177,6 +177,10 @@ export default function ContentHandler({contents, from, durationInFrames, onColl
         if (reply !== null) {
           tweetDurationInFrames += getAudioContentDurationInFrames(reply, fps)
         }
+        
+        if (! tweetDurationInFrames) {
+          return
+        }
 
         previousDurationInFrames = tweetDurationInFrames
 
@@ -497,6 +501,7 @@ function audioContentHandler(
   editable: Editable,
   fps: number
 ): JSX.Element {
+
   const audioDurationInFrames = getAudioContentDurationInFrames(content, fps)
 
   const sequence = (
