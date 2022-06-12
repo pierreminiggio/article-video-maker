@@ -352,90 +352,92 @@ export default function ContentHandler({contents, from, durationInFrames, onColl
       } else if (contentType === ContentType.Embed) {
         const embedContent = content as EmbedContent
 
-        if (embedContent.video_clip && embedContent.video_clip_duration && embedContent.video_title) {
-          const videoEmbedContent = embedContent as VideoEmbedContent
-          const clipDurationInFrames = getDurationInFrames(videoEmbedContent.video_clip_duration, fps)
-          previousDurationInFrames = clipDurationInFrames
+        if (embedContent.video_clip) {
+          if (embedContent.video_clip_duration && embedContent.video_title) {
+            const videoEmbedContent = embedContent as VideoEmbedContent
+            const clipDurationInFrames = getDurationInFrames(videoEmbedContent.video_clip_duration, fps)
+            previousDurationInFrames = clipDurationInFrames
 
-          const clipFrom = editable.from
+            const clipFrom = editable.from
 
-          const backgroundColor = '#F57C00'
+            const backgroundColor = '#F57C00'
 
-          const textPadding = 20
-          const shadowWidth = 20
-          const shadowWidthPx = shadowWidth + 'px'
-          const shadowHeightPx = shadowWidthPx
+            const textPadding = 20
+            const shadowWidth = 20
+            const shadowWidthPx = shadowWidth + 'px'
+            const shadowHeightPx = shadowWidthPx
 
-          const textDivStyle: CSSProperties = {
-            position: 'absolute',
-            top: 0,
-            left: textPadding,
-            right: textPadding
-          }
+            const textDivStyle: CSSProperties = {
+              position: 'absolute',
+              top: 0,
+              left: textPadding,
+              right: textPadding
+            }
 
-          const imageSizeRatio = 0.35
+            const imageSizeRatio = 0.35
 
-          audioSequences.push(<Sequence
-            key={contentType + contentIndex}
-            from={clipFrom}
-            durationInFrames={clipDurationInFrames}
-            name={'Tweet ' + contentIndex}
-          >
-            <Video src={videoEmbedContent.video_clip} style={{position: 'absolute'}} />
-            <div style={{
-              fontSize: 40,
-              color: 'black',
-              marginTop: height * (imagesHeightRatio + 0.1 + imageSizeRatio),
-              textAlign: 'center',
-              fontFamily: 'Montserrat',
-              lineHeight: 1.8,
-              position: 'relative',
-              width: '100%',
-              opacity: contentOpacity
-            }}>
-              <div style={textDivStyle}>
-                <span
-                  style={{
-                    color: 'transparent',
-                    backgroundColor,
-                    opacity: 0.7,
-                    boxShadow:
-                      shadowWidthPx + ' 0 0 '
-                        + backgroundColor
-                        + ',-' + shadowWidthPx + ' 0 0 '
-                        + backgroundColor
-                        + ',' + shadowWidthPx + ' ' + shadowHeightPx + ' 0 '
-                        + backgroundColor
-                        + ',-' + shadowWidthPx + ' -' + shadowHeightPx + ' 0 '
-                        + backgroundColor
-                        + ',' + shadowWidthPx + ' -' + shadowHeightPx + ' 0 '
-                        + backgroundColor
-                        + ',-' + shadowWidthPx + ' ' + shadowHeightPx + ' 0 '
-                        + backgroundColor
-                      ,
-                  }}
-                >
-                  {videoEmbedContent.video_title}
-                </span>
+            audioSequences.push(<Sequence
+              key={contentType + contentIndex}
+              from={clipFrom}
+              durationInFrames={clipDurationInFrames}
+              name={'Tweet ' + contentIndex}
+            >
+              <Video src={videoEmbedContent.video_clip} style={{position: 'absolute'}} />
+              <div style={{
+                fontSize: 40,
+                color: 'black',
+                marginTop: height * (imagesHeightRatio + 0.1 + imageSizeRatio),
+                textAlign: 'center',
+                fontFamily: 'Montserrat',
+                lineHeight: 1.8,
+                position: 'relative',
+                width: '100%',
+                opacity: contentOpacity
+              }}>
+                <div style={textDivStyle}>
+                  <span
+                    style={{
+                      color: 'transparent',
+                      backgroundColor,
+                      opacity: 0.7,
+                      boxShadow:
+                        shadowWidthPx + ' 0 0 '
+                          + backgroundColor
+                          + ',-' + shadowWidthPx + ' 0 0 '
+                          + backgroundColor
+                          + ',' + shadowWidthPx + ' ' + shadowHeightPx + ' 0 '
+                          + backgroundColor
+                          + ',-' + shadowWidthPx + ' -' + shadowHeightPx + ' 0 '
+                          + backgroundColor
+                          + ',' + shadowWidthPx + ' -' + shadowHeightPx + ' 0 '
+                          + backgroundColor
+                          + ',-' + shadowWidthPx + ' ' + shadowHeightPx + ' 0 '
+                          + backgroundColor
+                        ,
+                    }}
+                  >
+                    {videoEmbedContent.video_title}
+                  </span>
+                </div>
+                <div style={textDivStyle}>
+                  <span
+                    style={{
+                      color: '#FFF'
+                    }}
+                  >
+                    {videoEmbedContent.video_title}
+                  </span>
+                </div>
               </div>
-              <div style={textDivStyle}>
-                <span
-                  style={{
-                    color: '#FFF'
-                  }}
-                >
-                  {videoEmbedContent.video_title}
-                </span>
-              </div>
-            </div>
-          </Sequence>)
+            </Sequence>)
 
-          if (frame >= clipFrom && frame <= (clipFrom + clipDurationInFrames)) {
-            collidingAudio = true
+            if (frame >= clipFrom && frame <= (clipFrom + clipDurationInFrames)) {
+              collidingAudio = true
+            }
+
+            editable.from += clipDurationInFrames
           }
-
-          editable.from += clipDurationInFrames
-
+          // If downloading video clip fails, whatever, we'll not include it in the video
         } else {
           console.log(content)
           throw new Error(contentType + ' not implemented')
