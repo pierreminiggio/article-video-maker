@@ -22,8 +22,8 @@ export default function Music({durationInFrames, collidingAudio}: MusicProps) {
   )
 
   const frame = useCurrentFrame()
-  const maxIntroMusicVolume = 0.8
-  const maxMusicVolume = 0.2
+  const maxIntroMusicVolume = 1
+  const maxMusicVolume = 0.4
   const musicVolume = useMemo<number>(() => {
 
     if (frame <= introLength) {
