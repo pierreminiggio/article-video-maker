@@ -226,6 +226,27 @@ export default function ContentHandler({contents, from, durationInFrames, onColl
             fps
           ))
         }
+      } else if (contentType === ContentType.Image || (contentType === ContentType.CaptionedImage && ! content.caption)) {
+        const imageContent = content as ImageContent
+        const imageDurationInFrames = previousDurationInFrames || (3 * fps)
+
+        const imageSizeRatio = 0.35
+
+        audioSequences.push(<Sequence
+          key={contentType + 'image' + contentIndex}
+          from={previousFrom}
+          durationInFrames={imageDurationInFrames}
+          name={contentType.substr(0, 1).toUpperCase() + contentType.substr(1, contentType.length - 1) + ' ' + contentIndex}
+        >
+          <div style={{
+            marginTop: height * 0.05,
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%'
+          }}>
+            <Img src={imageContent.image} height={height * imageSizeRatio} style={{flex: 'auto 0'}} />
+          </div>
+        </Sequence>)
       } else if (contentType === ContentType.CaptionedImage) {
         const captionedImageContent = content as CaptionedImageContent
         const audioDurationInFrames = getAudioContentDurationInFrames(captionedImageContent, fps)
@@ -328,27 +349,6 @@ export default function ContentHandler({contents, from, durationInFrames, onColl
           editable,
           fps
         ))
-      } else if (contentType === ContentType.Image) {
-        const imageContent = content as ImageContent
-        const imageDurationInFrames = previousDurationInFrames || (3 * fps)
-
-        const imageSizeRatio = 0.35
-
-        audioSequences.push(<Sequence
-          key={contentType + 'image' + contentIndex}
-          from={previousFrom}
-          durationInFrames={imageDurationInFrames}
-          name={contentType.substr(0, 1).toUpperCase() + contentType.substr(1, contentType.length - 1) + ' ' + contentIndex}
-        >
-          <div style={{
-            marginTop: height * 0.05,
-            display: 'flex',
-            justifyContent: 'center',
-            width: '100%'
-          }}>
-            <Img src={imageContent.image} height={height * imageSizeRatio} style={{flex: 'auto 0'}} />
-          </div>
-        </Sequence>)
       } else if (contentType === ContentType.Embed) {
         const embedContent = content as EmbedContent
 

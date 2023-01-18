@@ -124,7 +124,7 @@ export default function Intro({
           fontSize: 55,
           textAlign: 'center',
           position: 'absolute',
-          top: '50%',
+          top: '60%',
           left: 0,
           right: 0,
           opacity: textOpacity,
